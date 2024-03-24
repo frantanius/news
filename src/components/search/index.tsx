@@ -1,16 +1,15 @@
 import { useState } from 'react';
-import { useDebouncedCallback } from 'use-debounce';
+import { useDebounce } from 'use-debounce';
 import useDropdown from 'hooks/useDropdown';
+import { useNews } from 'hooks/useNews';
 import Filter from 'components/search/filter';
 import { Input } from 'components/ui/input';
 
 export default function Search() {
   const { isOpen, toggleDropdown, dropdownRef } = useDropdown();
   const [searchValue, setSearchValue] = useState<string>('');
-
-  const handleSearch = useDebouncedCallback((val) => {
-    setSearchValue(val);
-  }, 300);
+  const [value] = useDebounce(searchValue, 1000);
+  useNews({ search: value });
 
   return (
     <>
@@ -42,8 +41,8 @@ export default function Search() {
           type="search"
           className="focus:bg-[#292a2d]"
           placeholder="search for articles by keyword"
-          defaultValue={searchValue}
-          onChange={(e) => handleSearch(e.target.value)}
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
         />
         <button
           type="button"

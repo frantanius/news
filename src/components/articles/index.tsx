@@ -1,40 +1,59 @@
-import { cn } from 'lib/utils';
-import useRandomArticles from 'hooks/useRandomArticles';
+import { useEffect } from 'react';
+import { useInView } from 'react-intersection-observer';
+import { useNews } from 'hooks/useNews';
+import { cn, formatDateToLocal } from 'lib/utils';
+import { IArticle } from 'lib/api/defenitions';
+import { ArticlesSkeleton, ArticleSkeleton } from 'components/ui/skeletons';
 
 export default function ArticlesWrapper() {
-  const articles = useRandomArticles();
+  const { isLoading, data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useNews({});
+  const { ref, inView } = useInView({
+    threshold: 0,
+  });
+
+  useEffect(() => {
+    if (inView && hasNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, fetchNextPage]);
+
+  if (isLoading || !data) return <ArticlesSkeleton />;
+
   return (
     <div className="rounded-2 relative grid grid-cols-1 gap-0 divide-y divide-gray-500 rounded-2xl bg-primary p-4 sm:p-6 lg:p-8">
-      {articles.map((article, idx) => (
+      {data.map((article, idx) => (
         <Article
           key={idx}
-          className={`py-4 ${idx === articles.length - 1 ? 'pb-0' : ''}`}
-          title={article.title}
-          date={article.date}
-          author={article.author}
-          imgUrl={article.imgUrl}
-          url={article.url}
+          className={`py-4 ${idx === data.length - 1 ? 'pb-2' : ''}`}
+          data={article}
         />
       ))}
+      <div ref={ref}>
+        {isFetchingNextPage ? (
+          <ArticleSkeleton className="p-4" />
+        ) : hasNextPage ? (
+          <p className="mt-5 text-center">Load more</p>
+        ) : (
+          <p className="mt-5 text-center">No more data</p>
+        )}
+      </div>
     </div>
   );
 }
 
-interface IArticle {
+interface IArticles {
   className?: string;
-  title: string;
-  date: string;
-  author?: string;
-  imgUrl?: string;
-  url: string;
+  data: IArticle;
 }
 
-function Article({ title, date, author, imgUrl, url, className }: IArticle) {
+function Article(props: IArticles) {
+  const { title, publishedAt, url, author, urlToImage } = props.data;
   return (
     <article
       className={cn(
         'group relative grid w-full grid-cols-3 items-start justify-between gap-4',
-        className,
+        props.className,
       )}
     >
       <div className="col-span-2 h-full">
@@ -59,7 +78,9 @@ function Article({ title, date, author, imgUrl, url, className }: IArticle) {
           </div>
           <div className="mt-4 flex items-center gap-1 sm:mt-9">
             <div className="flex items-center gap-1 text-gray-400">
-              <p className="font-googleSans text-xs font-medium">{date}</p>
+              <p className="font-googleSans text-xs font-medium">
+                {formatDateToLocal(publishedAt)}
+              </p>
             </div>
             {author && (
               <>
@@ -74,7 +95,7 @@ function Article({ title, date, author, imgUrl, url, className }: IArticle) {
       </div>
       <figure className="col-span-1">
         <img
-          src={imgUrl}
+          src={urlToImage}
           alt={title}
           className="h-24 w-48 rounded-2xl object-cover"
         />
