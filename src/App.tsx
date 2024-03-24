@@ -1,7 +1,12 @@
+import Layout from 'components/layout';
+import Articles from 'components/articles';
+import { ArticleSkeleton } from 'components/ui/skeletons';
+
 export default function App() {
   return (
-    <>
-      <h1 className="text-3xl font-bold underline">Hello world!</h1>
-    </>
+    <Layout>
+      <Articles />
+      <ArticleSkeleton className="p-4" />
+    </Layout>
   );
 }

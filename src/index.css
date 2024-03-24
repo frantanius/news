@@ -1,3 +1,52 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  @font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src:
+      local('Roboto-Regular'),
+      url('./assets/fonts/Roboto-Regular.ttf') format('truetype');
+  }
+
+  @font-face {
+    font-family: 'Google Sans';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src:
+      local('GoogleSans-Regular'),
+      url('./assets/fonts/GoogleSans-Regular.ttf') format('truetype');
+  }
+
+  @font-face {
+    font-family: 'Google Sans Medium';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src:
+      local('GoogleSans-Medium'),
+      url('./assets/fonts/GoogleSans-Medium.ttf') format('truetype');
+  }
+
+  @font-face {
+    font-family: 'Google Sans Bold';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src:
+      local('GoogleSans-Bold'),
+      url('./assets/fonts/GoogleSans-Bold.ttf') format('truetype');
+  }
+}
+
+@layer utilities {
+  body {
+    background-color: #292a2d;
+    color: #ffffff;
+  }
+}
