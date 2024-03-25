@@ -1,24 +1,24 @@
-import { ApiResponse, QueryParams } from 'lib/api/defenitions';
-import { news_api_url, news_api_key } from './url';
+import { ApiResponse, Params } from 'lib/defenitions';
+import { newsApi_All, newsApi_Top, newsApi_key } from 'lib/api/url';
 
-export async function fetchArticles(
-  { search, date, category, source }: QueryParams,
-  page: number,
-): Promise<ApiResponse> {
-  const fromDate = date?.startDate ? date.startDate.toISOString() : undefined;
-  const toDate = date?.endDate ? date.endDate.toISOString() : undefined;
+export async function fetchArticles(params: Params): Promise<ApiResponse> {
+  const { q, category, from, to, page } = params;
+
+  const date = {
+    ...(from && to && { from: from.toString(), to: to.toString() }),
+  };
 
   const queryParams = new URLSearchParams({
-    q: search || 'Bitcoin',
-    sortBy: 'popularity',
-    pageSize: '5',
-    ...(category && { category }),
-    ...(source && { source }),
-    ...(fromDate && toDate && { from: fromDate, to: toDate }),
+    q: q || 'Bitcoin',
+    page: page ? page.toString() : '1',
+    pageSize: '20',
+    ...(!category && { sortBy: 'popularity', language: 'en', ...date }),
+    ...(category && { country: 'us', category }),
   }).toString();
 
   const response = await fetch(
-    `${news_api_url}?${queryParams}&page=${page}&apiKey=${news_api_key}`,
+    `${category ? newsApi_Top : newsApi_All}?${queryParams}&apiKey=${newsApi_key}`,
   );
+
   return await response.json();
 }

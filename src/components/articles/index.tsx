@@ -1,24 +1,36 @@
 import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useNews } from 'hooks/useNews';
+import useNews from 'hooks/useNews';
+import { useStoreFilter } from 'hooks/useStoreFilter';
 import { cn, formatDateToLocal } from 'lib/utils';
-import { IArticle } from 'lib/api/defenitions';
+import { IArticle } from 'lib/defenitions';
 import { ArticlesSkeleton, ArticleSkeleton } from 'components/ui/skeletons';
+import { DataNotFound } from 'components/ui/errorScreen';
 
 export default function ArticlesWrapper() {
-  const { isLoading, data, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useNews({});
-  const { ref, inView } = useInView({
-    threshold: 0,
-  });
+  const { ref, inView } = useInView({ threshold: 0 });
 
+  const { search, date, selectedCategory } = useStoreFilter();
+  const { isLoading, data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useNews({
+      q: search,
+      from: date?.startDate,
+      to: date?.endDate,
+      category: selectedCategory,
+    });
+
+  /*
+    Trigger fetching the next page when the element
+    is visible in the viewport.
+  */
   useEffect(() => {
     if (inView && hasNextPage) {
       fetchNextPage();
     }
   }, [inView, hasNextPage, fetchNextPage]);
 
-  if (isLoading || !data) return <ArticlesSkeleton />;
+  if (isLoading) return <ArticlesSkeleton />;
+  if (!data?.length) return <DataNotFound />;
 
   return (
     <div className="rounded-2 relative grid grid-cols-1 gap-0 divide-y divide-gray-500 rounded-2xl bg-primary p-4 sm:p-6 lg:p-8">
@@ -35,7 +47,7 @@ export default function ArticlesWrapper() {
         ) : hasNextPage ? (
           <p className="mt-5 text-center">Load more</p>
         ) : (
-          <p className="mt-5 text-center">No more data</p>
+          <p className="mt-5 text-center">Stop! No more data</p>
         )}
       </div>
     </div>

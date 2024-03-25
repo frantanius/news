@@ -1,0 +1,30 @@
+[
+  {
+    "value": "general",
+    "option": "General"
+  },
+  {
+    "value": "business",
+    "option": "Business"
+  },
+  {
+    "value": "entertainment",
+    "option": "Entertainment"
+  },
+  {
+    "value": "health",
+    "option": "Health"
+  },
+  {
+    "value": "science",
+    "option": "Science"
+  },
+  {
+    "value": "sports",
+    "option": "Sports"
+  },
+  {
+    "value": "technology",
+    "option": "Technology"
+  }
+]

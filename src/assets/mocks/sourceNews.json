@@ -1,0 +1,14 @@
+[
+  {
+    "value": "newsapi",
+    "option": "News Api"
+  },
+  {
+    "value": "bbc",
+    "option": "BBC News"
+  },
+  {
+    "value": "nytimes",
+    "option": "New York Times"
+  }
+]

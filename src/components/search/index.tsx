@@ -1,15 +1,25 @@
-import { useState } from 'react';
-import { useDebounce } from 'use-debounce';
+import { useRef } from 'react';
+import { useDebouncedCallback } from 'use-debounce';
 import useDropdown from 'hooks/useDropdown';
-import { useNews } from 'hooks/useNews';
+import { useStoreFilter } from 'hooks/useStoreFilter';
 import Filter from 'components/search/filter';
 import { Input } from 'components/ui/input';
 
 export default function Search() {
   const { isOpen, toggleDropdown, dropdownRef } = useDropdown();
-  const [searchValue, setSearchValue] = useState<string>('');
-  const [value] = useDebounce(searchValue, 1000);
-  useNews({ search: value });
+  const { search, setSearch, clearOnlySearch } = useStoreFilter();
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleSearch = useDebouncedCallback((val) => {
+    setSearch(val);
+  }, 1000);
+
+  const clearInputRef = () => {
+    if (inputRef.current) {
+      inputRef.current.value = '';
+      clearOnlySearch();
+    }
+  };
 
   return (
     <>
@@ -21,6 +31,7 @@ export default function Search() {
       </label>
       <div className="relative">
         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+          <span className="sr-only">Search icon</span>
           <svg
             className="h-5 w-5 text-gray-500 dark:text-gray-400"
             fill="none"
@@ -33,17 +44,39 @@ export default function Search() {
               strokeLinejoin="round"
               strokeWidth="2"
               d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            ></path>
+            />
           </svg>
         </div>
         <Input
           id="search-news"
-          type="search"
+          type="text"
           className="focus:bg-[#292a2d]"
           placeholder="search for articles by keyword"
-          value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
+          ref={inputRef}
+          defaultValue={search}
+          onChange={(e) => handleSearch(e.target.value)}
         />
+        {search && (
+          <button
+            type="button"
+            onClick={clearInputRef}
+            className="absolute inset-y-0 right-10 flex items-center pr-3"
+          >
+            <span className="sr-only">Clear search</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 text-gray-400"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </button>
+        )}
         <button
           type="button"
           onClick={toggleDropdown}
