@@ -3,20 +3,21 @@ import { useInView } from 'react-intersection-observer';
 import useNews from 'hooks/useNews';
 import { useStoreFilter } from 'hooks/useStoreFilter';
 import { cn, formatDateToLocal } from 'lib/utils';
-import { IArticle } from 'lib/defenitions';
+import { TFormatResponse } from 'lib/defenitions';
 import { ArticlesSkeleton, ArticleSkeleton } from 'components/ui/skeletons';
 import { DataNotFound } from 'components/ui/errorScreen';
 
 export default function ArticlesWrapper() {
   const { ref, inView } = useInView({ threshold: 0 });
 
-  const { search, date, selectedCategory } = useStoreFilter();
+  const { search, date, selectedCategory, selectedSource } = useStoreFilter();
   const { isLoading, data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useNews({
       q: search,
       from: date?.startDate,
       to: date?.endDate,
       category: selectedCategory,
+      source: selectedSource,
     });
 
   /*
@@ -56,11 +57,11 @@ export default function ArticlesWrapper() {
 
 interface IArticles {
   className?: string;
-  data: IArticle;
+  data: TFormatResponse;
 }
 
 function Article(props: IArticles) {
-  const { title, publishedAt, url, author, urlToImage } = props.data;
+  const { title, publishedAt, url, author, urlToImage, source } = props.data;
   return (
     <article
       className={cn(
@@ -79,7 +80,7 @@ function Article(props: IArticles) {
           <div>
             <div className="h-4 w-full">
               <img
-                src="https://lh3.googleusercontent.com/DaCtO2iCVrnM4IetKsTRCPKBn9N1VZzyWseCzR0TZ8vbM8rcoRaw4KoYjaA4NeB2hxVNCstucQ=h24-rw"
+                src={source.logo}
                 alt="source"
                 className="h-3 object-cover"
               />
@@ -89,11 +90,13 @@ function Article(props: IArticles) {
             </h3>
           </div>
           <div className="mt-4 flex items-center gap-1 sm:mt-9">
-            <div className="flex items-center gap-1 text-gray-400">
-              <p className="font-googleSans text-xs font-medium">
-                {formatDateToLocal(publishedAt)}
-              </p>
-            </div>
+            {publishedAt && (
+              <div className="flex items-center gap-1 text-gray-400">
+                <p className="font-googleSans text-xs font-medium">
+                  {formatDateToLocal(publishedAt)}
+                </p>
+              </div>
+            )}
             {author && (
               <>
                 <hr className="mx-1 my-0 h-[3px] w-[3px] shrink-0 rounded-[1.5px] border-[none] bg-[#c4c7c5]" />

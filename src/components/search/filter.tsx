@@ -2,8 +2,8 @@ import { RefObject } from 'react';
 import Datepicker from 'react-tailwindcss-datepicker';
 import { useStoreFilter } from 'hooks/useStoreFilter';
 import { Select } from 'components/ui/select';
-import mockCategories from 'assets/mocks/categoriesFilter.json';
-import mockSourceNews from 'assets/mocks/sourceNews.json';
+import { SOURCE_OPTIONS, CATEGORIES } from 'lib/constants';
+import { ESourceValue, TSourceOption } from 'lib/defenitions';
 
 interface FilterProps {
   dropdownRef: RefObject<HTMLDivElement>;
@@ -46,7 +46,7 @@ export default function Filter({ dropdownRef }: FilterProps) {
                   <option value="" disabled>
                     Choose Source
                   </option>
-                  {mockSourceNews.map((opt) => (
+                  {SOURCE_OPTIONS.map((opt) => (
                     <option key={opt.value} value={opt.value}>
                       {opt.option}
                     </option>
@@ -56,46 +56,50 @@ export default function Filter({ dropdownRef }: FilterProps) {
             </div>
 
             {/* Filter by Category */}
-            <div className="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3">
-              <dt className=" font-googleSans font-medium text-gray-300">
-                <label htmlFor="source">Categories</label>
-              </dt>
-              <dd className="text-gray-400 sm:col-span-2">
-                <Select
-                  name="source"
-                  id="source"
-                  className="mt-1.5"
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                >
-                  <option value="" disabled>
-                    Select Category
-                  </option>
-                  {mockCategories.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.option}
+            {selectedSource !== ESourceValue.NEWS_API_ALL && (
+              <div className="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3">
+                <dt className=" font-googleSans font-medium text-gray-300">
+                  <label htmlFor="source">Categories</label>
+                </dt>
+                <dd className="text-gray-400 sm:col-span-2">
+                  <Select
+                    name="source"
+                    id="source"
+                    className="mt-1.5"
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                  >
+                    <option value="" disabled>
+                      Select Category
                     </option>
-                  ))}
-                </Select>
-              </dd>
-            </div>
+                    {CATEGORIES[selectedSource]?.map((opt: TSourceOption) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.option}
+                      </option>
+                    ))}
+                  </Select>
+                </dd>
+              </div>
+            )}
 
             {/* Filter by Date */}
-            <div className="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3">
-              <dt className="font-googleSans font-medium text-gray-300">
-                Date
-              </dt>
-              <dd className="text-gray-400 sm:col-span-2">
-                <Datepicker
-                  key={dateKey}
-                  maxDate={new Date()}
-                  useRange={false}
-                  value={date}
-                  onChange={(d) => setDate(d)}
-                  inputClassName="w-full rounded border border-slate-500 bg-transparent px-3 py-2 text-sm text-slate-300 focus:border-slate-600 focus:ring-0 focus:outline-none"
-                />
-              </dd>
-            </div>
+            {selectedSource !== ESourceValue.NEWS_API_TOP && (
+              <div className="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3">
+                <dt className="font-googleSans font-medium text-gray-300">
+                  Date
+                </dt>
+                <dd className="text-gray-400 sm:col-span-2">
+                  <Datepicker
+                    key={dateKey}
+                    maxDate={new Date()}
+                    useRange={false}
+                    value={date}
+                    onChange={(d) => setDate(d)}
+                    inputClassName="w-full rounded border border-slate-500 bg-transparent px-3 py-2 text-sm text-slate-300 focus:border-slate-600 focus:ring-0 focus:outline-none"
+                  />
+                </dd>
+              </div>
+            )}
           </dl>
 
           <div className="mr-auto mt-5 flex w-full justify-end">

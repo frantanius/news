@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { DateValueType } from 'react-tailwindcss-datepicker';
-import mockSourceNews from 'assets/mocks/sourceNews.json';
+import { ESourceValue } from 'lib/defenitions';
 
 /* Define the state filter */
 type State = {
@@ -8,7 +8,7 @@ type State = {
   selectedSource: string;
   selectedCategory: string;
   date: DateValueType;
-  dateKey: number;
+  dateKey: number; // for clear date
 };
 
 /* Define the actions filter */
@@ -25,7 +25,7 @@ type Action = {
 /* Initialize the state filter */
 const initialState: State = {
   search: '',
-  selectedSource: mockSourceNews[0].value,
+  selectedSource: ESourceValue.NY_TIMES,
   selectedCategory: '',
   date: { startDate: '', endDate: '' },
   dateKey: 0,
@@ -42,7 +42,7 @@ export const Store = create<State & Action>((set) => ({
   clearOnlySearch: () => set((state) => ({ ...state, search: '' })),
   clearAll: () =>
     set((state) => ({
-      ...state,
+      // ...state,
       search: '',
       selectedSource: '',
       selectedCategory: '',

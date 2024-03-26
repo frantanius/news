@@ -1,11 +1,11 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { fetchArticles } from 'lib/api/actions';
-import { Params } from 'lib/defenitions';
+import { TQueryParams } from 'lib/defenitions';
 
-export default function useNews(params: Params) {
-  const { q, from, to, category } = params;
+export default function useNews(params: TQueryParams) {
+  const { q, from, to, category, source } = params;
   return useInfiniteQuery({
-    queryKey: ['news', q, from, to, category],
+    queryKey: ['news', q, from, to, category, source],
     initialPageParam: 1,
     throwOnError: true,
     staleTime: 1000 * 30,
@@ -16,7 +16,7 @@ export default function useNews(params: Params) {
         return undefined;
       }
 
-      return lastPageParam + 1 || undefined;
+      return lastPageParam + 1;
     },
     select: (data) => data.pages.flatMap((page) => page.articles),
   });
