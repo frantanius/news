@@ -60,7 +60,7 @@
     "tailwindcss": "^3.4.1"
   },
   "lint-staged": {
-    "*": "pnpm prettier"
+    "./src": "pnpm prettier"
   },
   "husky": {
     "hooks": {

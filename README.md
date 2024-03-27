@@ -18,18 +18,20 @@ This is a simple React application that demonstrates news aggregator website tha
 
 1. **Clone the repository:**
 
-   ```bash
-   git clone https://github.com/frantanius/news.git
-   ```
+    ```bash
+    git clone https://github.com/frantanius/news.git
+    ```
 
-   ```bash
-   cd news
-   ```
+    ```bash
+    cd news
+    ```
 
 2. **Build and run the app with Docker:**
-`bash
+
+    ```bash
     docker-compose up --build
-    `
+    ```
+
 </details>
 
 <details>
@@ -50,47 +52,48 @@ This is a simple React application that demonstrates news aggregator website tha
 
 - Choose one of the following package managers to install the app:
 
-- _using pnpm:_
+- *using pnpm:*
   ```
   pnpm i
   ```
-- _using yarn:_
+- *using yarn:*
   ```
   yarn install
   ```
-- _using npm:_
+- *using npm:*
   ```
   npm run install
   ```
 
 3. **Run the app:**
 
-- _using pnpm:_
+- *using pnpm:*
   ```
   pnpm start
   ```
-- _using yarn:_
+- *using yarn:*
   ```
   yarn start
   ```
-- _using npm:_
+- *using npm:*
   ```
   npm run start
   ```
 
-4. **Build the app _(optional)_:**
+4. **Build the app *(optional)*:**
 
-- _using pnpm:_
+- *using pnpm:*
   ```
   pnpm build
   ```
-- _using yarn:_
+- *using yarn:*
   ```
   yarn build
   ```
-- _using npm:_
-`     npm run build
-    `
+- *using npm:*
+    ```     
+    npm run build
+    ```
 </details>
 
 ## Accessing the App
