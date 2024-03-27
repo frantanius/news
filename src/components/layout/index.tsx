@@ -5,6 +5,7 @@ import { ErrorScreen } from 'components/ui/errorScreen';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { reset } = useQueryErrorResetBoundary();
+
   return (
     <div className="flex h-screen flex-col">
       <Header />

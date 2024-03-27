@@ -1,9 +1,9 @@
 import { RefObject } from 'react';
 import Datepicker from 'react-tailwindcss-datepicker';
 import { useStoreFilter } from 'hooks/useStoreFilter';
-import { Select } from 'components/ui/select';
 import { SOURCE_OPTIONS, CATEGORIES } from 'lib/constants';
 import { ESourceValue, TSourceOption } from 'lib/defenitions';
+import { Select } from 'components/ui/select';
 
 interface FilterProps {
   dropdownRef: RefObject<HTMLDivElement>;
@@ -19,7 +19,13 @@ export default function Filter({ dropdownRef }: FilterProps) {
     setSelectedCategory,
     setDate,
     clearAll,
+    saveFilter,
   } = useStoreFilter();
+
+  const handleSaveFeed = () => {
+    saveFilter();
+    alert('Successfully saved news feeds!');
+  };
 
   return (
     <div
@@ -108,6 +114,13 @@ export default function Filter({ dropdownRef }: FilterProps) {
               className="px-4 py-2 font-googleSans text-sm font-semibold text-indigo-300 hover:rounded-full hover:bg-[rgb(59,61,67)]"
             >
               Clear
+            </button>
+            <button
+              onClick={handleSaveFeed}
+              disabled={!selectedSource && !selectedCategory}
+              className="rounded-full bg-indigo-300 px-4 py-2 font-googleSans text-sm font-semibold text-blue-900 shadow-sm hover:bg-indigo-200 disabled:bg-[rgb(60,64,67)] disabled:text-gray-500"
+            >
+              Save to Feed
             </button>
           </div>
         </div>

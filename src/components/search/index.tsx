@@ -51,7 +51,7 @@ export default function Search() {
           id="search-news"
           type="text"
           className="focus:bg-[#292a2d]"
-          placeholder="search for articles by keyword"
+          placeholder="search for articles by any keyword or author"
           ref={inputRef}
           defaultValue={search}
           onChange={(e) => handleSearch(e.target.value)}

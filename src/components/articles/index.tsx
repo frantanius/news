@@ -9,7 +9,6 @@ import { DataNotFound } from 'components/ui/errorScreen';
 
 export default function ArticlesWrapper() {
   const { ref, inView } = useInView({ threshold: 0 });
-
   const { search, date, selectedCategory, selectedSource } = useStoreFilter();
   const { isLoading, data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useNews({

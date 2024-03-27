@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { DateValueType } from 'react-tailwindcss-datepicker';
 import { ESourceValue } from 'lib/defenitions';
 
@@ -9,6 +10,11 @@ type State = {
   selectedCategory: string;
   date: DateValueType;
   dateKey: number; // for clear date
+  savedFilters: {
+    search: string;
+    selectedSource: string;
+    selectedCategory: string;
+  };
 };
 
 /* Define the actions filter */
@@ -20,6 +26,7 @@ type Action = {
   setDateKey: (key: State['dateKey']) => void;
   clearOnlySearch: () => void;
   clearAll: () => void;
+  saveFilter: () => void;
 };
 
 /* Initialize the state filter */
@@ -29,27 +36,42 @@ const initialState: State = {
   selectedCategory: '',
   date: { startDate: '', endDate: '' },
   dateKey: 0,
+  savedFilters: {
+    search: '',
+    selectedSource: '',
+    selectedCategory: '',
+  },
 };
 
-/* Create store filter */
-export const Store = create<State & Action>((set) => ({
-  ...initialState,
-  setSearch: (search) => set({ search }),
-  setSelectedSource: (selectedSource) => set({ selectedSource }),
-  setSelectedCategory: (selectedCategory) => set({ selectedCategory }),
-  setDate: (date) => set({ date }),
-  setDateKey: (key) => set({ dateKey: key }),
-  clearOnlySearch: () => set((state) => ({ ...state, search: '' })),
-  clearAll: () =>
-    set((state) => ({
-      // ...state,
-      search: '',
-      selectedSource: '',
-      selectedCategory: '',
-      date: { startDate: '', endDate: '' },
-      dateKey: state.dateKey + 1,
-    })),
-}));
+export const Store = create<State & Action>()(
+  persist(
+    (set) => ({
+      ...initialState,
+      setSearch: (search) => set({ search }),
+      setSelectedSource: (selectedSource) => set({ selectedSource }),
+      setSelectedCategory: (selectedCategory) => set({ selectedCategory }),
+      setDate: (date) => set({ date }),
+      setDateKey: (key) => set({ dateKey: key }),
+      clearOnlySearch: () => set((state) => ({ ...state, search: '' })),
+      clearAll: () => set(initialState),
+      saveFilter: () =>
+        set((state) => ({
+          ...state,
+          savedFilters: {
+            search: state.search,
+            selectedSource: state.selectedSource,
+            selectedCategory: state.selectedCategory,
+          },
+        })),
+    }),
+    // Persisted
+    {
+      name: 'feeds',
+      getStorage: () => localStorage,
+      partialize: (state) => ({ savedFilters: state.savedFilters }),
+    },
+  ),
+);
 
 /* Selector optimation filter */
 export const useStoreFilter = () => {
@@ -65,6 +87,8 @@ export const useStoreFilter = () => {
   const setDateKey = Store((state) => state.setDateKey);
   const clearOnlySearch = Store((state) => state.clearOnlySearch);
   const clearAll = Store((state) => state.clearAll);
+  const saveFilter = Store((state) => state.saveFilter);
+  const savedFilters = Store((state) => state.savedFilters);
 
   return {
     search,
@@ -79,5 +103,18 @@ export const useStoreFilter = () => {
     setDateKey,
     clearOnlySearch,
     clearAll,
+    saveFilter,
+    savedFilters,
   };
+};
+
+export const initializeFeed = () => {
+  const ls = localStorage.getItem('feeds');
+  const savedFilters = ls ? JSON.parse(ls).state.savedFilters : {};
+
+  Store.setState({
+    search: savedFilters.search || '',
+    selectedSource: savedFilters.selectedSource || ESourceValue.NY_TIMES,
+    selectedCategory: savedFilters.selectedCategory || '',
+  });
 };
