@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  web:
+    container_name: news-pulse
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - WATCHPACK_POLLING=true
+      - WDS_SOCKET_HOST=127.0.0.1
+      - WDS_SOCKET_PORT=3000
+      - CHOKIDAR_USEPOLLING=true
